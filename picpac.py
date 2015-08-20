@@ -1,7 +1,7 @@
-""" Picpac picks and packs my pics!
+""" Picpac picks and packs pics!
 
-Picpac recursively collects images inside a source folder and generates symlinks
-inside a destination folder. Usage: picpac <source_dir> <destination_dir>. Yo!
+Picpac recursively collects images inside a source folder and
+generates corresponding symlinks inside a destination folder.
 
 """
 
@@ -25,16 +25,20 @@ VALID_EXTENTIONS = {
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser()
+    parser = ArgumentParser(description=__doc__)
     parser.add_argument('source')
     parser.add_argument('destination')
     args = parser.parse_args()
 
+    counter = 0
     tree = walk(args.source)
     for node in tree:
         for file in node[FILES]:
             if Path(file).suffix in VALID_EXTENTIONS:
-                image = Path(node[DIR], file)
+                counter += 1
+                image = Path(node[DIR], str(counter) + '_' + file)
                 link = Path(args.destination, image.name)
                 if not link.exists():
                     link.symlink_to(image)
+
+    print('Picpic has created %s symlinks.' % counter)
