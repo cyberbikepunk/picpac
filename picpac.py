@@ -9,7 +9,7 @@ of file content not filename.
 
 """
 
-# TODO: Optimize for speed
+# TODO: Optimize for speed.
 # TODO: Add a progress bar.
 
 
@@ -96,22 +96,24 @@ def progress_bar(f):
 @progress_bar
 def pick_n_pack(source, destination, extensions):
     tree = walk(source)
-    added = 0
 
+    counter = 0
     for node in tree:
         info('found directory: %s', node[DIR])
+
         for file in node[FILES]:
             if Path(file).suffix in extensions:
                 image = Path(node[DIR], file)
                 hashed = Path(destination, encode(image))
+
                 if not hashed.exists():
                     hashed.symlink_to(image)
                     info('added symlink: %s', hashed)
-                    added += 1
+                    counter += 1
                 else:
                     info('skipped duplicate: %s', image)
 
-    print('Done: %s symlinks.' % added)
+    print('Done: added %s symlinks.' % counter)
 
 
 class DestinationError(Exception):
