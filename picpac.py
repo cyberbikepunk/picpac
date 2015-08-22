@@ -10,15 +10,15 @@ of file content not filename.
 """
 
 # TODO: Optimize for speed.
-# TODO: Add a progress bar.
 
-
+from progressbar import ProgressBar
 from os.path import isdir, expanduser
 from argparse import ArgumentParser
+from itertools import chain
 from os import walk, getcwd, mkdir, access, W_OK
-from pathlib import Path
 from logging import basicConfig, INFO, info, disable
 from hashlib import md5
+from pathlib import Path
 
 
 # Verbose mode:
@@ -40,38 +40,26 @@ VALID_EXTENTIONS = ['.jpg',
                     '.rif']
 
 
-def encode(filepath):
-    h = md5()
-
-    with open(str(filepath), 'rb') as f:
-        chunk = 0
-        while chunk != b'':
-            chunk = f.read(1024)
-            h.update(chunk)
-
-    return h.hexdigest() + filepath.suffix
-
-
 def parse():
-    parser = ArgumentParser(description=__doc__, prog='picpac')
+    parser = ArgumentParser(description=__doc__)
 
-    parser.add_argument('-v', '--verbose',
+    parser.add_argument('--verbose',
                         help='Turn verbose mode on',
                         default=False,
                         action='store_true')
 
-    parser.add_argument('-s', '--source',
+    parser.add_argument('--source', '-s',
                         help='Absolute path to source folder',
                         default=getcwd(),
                         type=str)
 
-    parser.add_argument('-d', '--destination',
+    parser.add_argument('--destination', '-d',
                         help='Absolute path to destination folder',
                         default=DESTINATION_FOLDER,
                         type=str)
 
-    parser.add_argument('-e', '--extensions',
-                        help='Valid file extensions like .mp3 (with the dot)',
+    parser.add_argument('--extensions', '-e',
+                        help='Valid file extensions like .mp3 (with the dots)',
                         default=VALID_EXTENTIONS,
                         type=str,
                         metavar='EXTENTION',
@@ -89,19 +77,22 @@ def parse():
     return args
 
 
-def progress_bar(f):
-    return f
-
-
-@progress_bar
 def pick_n_pack(source, destination, extensions):
-    tree = walk(source)
+    tree = list(walk(source))
 
-    counter = 0
+    progress = get_progress_bar(tree)
+    progress.start()
+
+    files = 0
+    symlinks = 0
+
     for node in tree:
         info('found directory: %s', node[DIR])
 
         for file in node[FILES]:
+            files += 1
+            progress.update(files)
+
             if Path(file).suffix in extensions:
                 image = Path(node[DIR], file)
                 hashed = Path(destination, encode(image))
@@ -109,11 +100,30 @@ def pick_n_pack(source, destination, extensions):
                 if not hashed.exists():
                     hashed.symlink_to(image)
                     info('added symlink: %s', hashed)
-                    counter += 1
+                    symlinks += 1
                 else:
                     info('skipped duplicate: %s', image)
 
-    print('Done: added %s symlinks.' % counter)
+    progress.finish()
+    print('Done: %s symlinks.' % symlinks)
+
+
+def get_progress_bar(tree_):
+    file_nodes = [node_[FILES] for node_ in tree_]
+    total_files = len(list(chain(*file_nodes)))
+    return ProgressBar(maxval=total_files)
+
+
+def encode(filepath):
+    h = md5()
+
+    with open(str(filepath), 'rb') as f:
+        chunk = 0
+        while chunk != b'':
+            chunk = f.read(1024)
+            h.update(chunk)
+
+    return h.hexdigest() + filepath.suffix
 
 
 class DestinationError(Exception):
