@@ -111,19 +111,23 @@ class DestinationError(Exception):
 
 
 def initialize(destination):
-    if not isdir(destination):
+    if isdir(destination):
+        pass
+    else:
         try:
             mkdir(destination)
         except OSError:
             raise DestinationError('Cannot create %s' % destination)
 
 
-if __name__ == '__main__':
-    p = parse()
-
-    if not p.verbose:
+def configure(verbose):
+    if not verbose:
         disable(INFO)
 
+
+if __name__ == '__main__':
+    p = parse()
+    configure(p.verbose)
     initialize(p.destination)
     pick_n_pack(p.source, p.destination, p.extensions)
 
