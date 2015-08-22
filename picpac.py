@@ -7,27 +7,26 @@ of file content not filename.
 
 """
 
+# NB: this script has not been optimized for speed.
+
 
 from os.path import isdir, expanduser
 from argparse import ArgumentParser
 from os import walk, getcwd, mkdir
 from pathlib import Path
-from logging import basicConfig, DEBUG, debug
+from logging import basicConfig, INFO, info, disable
 from hashlib import md5
 
 
-# NB: this script has not been optimized for speed.
+# Verbose mode:
+basicConfig(level=INFO, format='PICPAC | %(message)s')
 
-
-# Feedback
-basicConfig(level=DEBUG)
-
-# Readability
+# Readability:
 FILES = 2
 DIR = 0
 DOT = '.'
 
-# Defaults
+# Defaults:
 DESTINATION_FOLDER = expanduser('~/.picpac')
 VALID_EXTENTIONS = ['.jpg',
                     '.jpeg',
@@ -70,8 +69,13 @@ def parse():
                         metavar='EXT',
                         nargs='*')
 
+    parser.add_argument('--verbose', '-v',
+                        help='Turn verbose mode on',
+                        default=False,
+                        action='store_true')
+
     args = parser.parse_args()
-    debug('arguments: %s', args)
+    info('arguments: %s', args)
 
     assert isdir(args.source), 'Invalid source path'
     assert all([ext[0] is DOT for ext in args.extensions]), 'Invalid file extension'
@@ -84,19 +88,18 @@ def pick_n_pack(source, destination, extensions):
     added = 0
 
     for node in tree:
-        debug('directory: %s', node[DIR])
+        info('Found directory: %s', node[DIR])
         for file in node[FILES]:
             if Path(file).suffix in extensions:
                 image = Path(node[DIR], file)
                 hashed = Path(destination, encode(image))
                 if not hashed.exists():
                     hashed.symlink_to(image)
-                    debug('added: %s', hashed)
+                    info('Added symlink: %s', hashed)
                     added += 1
                 else:
-                    debug('skipping duplicate: %s', image)
+                    info('Skipping duplicate: %s', image)
 
-    debug('symlinks: %s', added)
     return added
 
 
@@ -114,6 +117,11 @@ def initialize(destination):
 
 if __name__ == '__main__':
     p = parse()
+
+    if not p.verbose:
+        disable(INFO)
+
     initialize(p.destination)
     n = pick_n_pack(p.source, p.destination, p.extensions)
-    print('Created %s symlinks' % n)
+
+    print('Created %s symlinks. Done.' % n)
