@@ -75,7 +75,10 @@ def parse():
                         action='store_true')
 
     args = parser.parse_args()
-    info('arguments: %s', args)
+
+    print('Source: %s' % args.destination)
+    print('Destination: %s.' % args.destination)
+    print('File extensions: %s' % args.extensions)
 
     assert isdir(args.source), 'Invalid source path'
     assert all([ext[0] is DOT for ext in args.extensions]), 'Invalid file extension'
@@ -100,7 +103,7 @@ def pick_n_pack(source, destination, extensions):
                 else:
                     info('Skipping duplicate: %s', image)
 
-    return added
+    print('Done: %s symlinks.' % added)
 
 
 class DestinationError(Exception):
@@ -122,6 +125,5 @@ if __name__ == '__main__':
         disable(INFO)
 
     initialize(p.destination)
-    n = pick_n_pack(p.source, p.destination, p.extensions)
+    pick_n_pack(p.source, p.destination, p.extensions)
 
-    print('Created %s symlinks. Done.' % n)
