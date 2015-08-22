@@ -1,3 +1,5 @@
+#! /usr/bin/python3
+
 """ PICPAC picks and packs your pics
 
 PICPAC recursively collects files inside the current directory and creates flat symlinks
@@ -19,7 +21,7 @@ from hashlib import md5
 
 
 # Verbose mode:
-basicConfig(level=INFO, format='PICPAC | %(message)s')
+basicConfig(level=INFO, format='PICPAC %(message)s')
 
 # Readability:
 FILES = 2
@@ -91,17 +93,17 @@ def pick_n_pack(source, destination, extensions):
     added = 0
 
     for node in tree:
-        info('Found directory: %s', node[DIR])
+        info('found directory: %s', node[DIR])
         for file in node[FILES]:
             if Path(file).suffix in extensions:
                 image = Path(node[DIR], file)
                 hashed = Path(destination, encode(image))
                 if not hashed.exists():
                     hashed.symlink_to(image)
-                    info('Added symlink: %s', hashed)
+                    info('added symlink: %s', hashed)
                     added += 1
                 else:
-                    info('Skipping duplicate: %s', image)
+                    info('skipped duplicate: %s', image)
 
     print('Done: %s symlinks.' % added)
 
