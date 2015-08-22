@@ -9,7 +9,9 @@ of file content not filename.
 
 """
 
+
 # TODO: Optimize for speed.
+
 
 from progressbar import ProgressBar
 from os.path import isdir, expanduser
@@ -27,7 +29,6 @@ basicConfig(level=INFO, format='PICPAC %(message)s')
 # Readability:
 FILES = 2
 DIR = 0
-DOT = '.'
 
 # Defaults:
 DESTINATION_FOLDER = expanduser('~/.picpac')
@@ -43,24 +44,24 @@ VALID_EXTENTIONS = ['.jpg',
 def parse():
     parser = ArgumentParser(description=__doc__)
 
-    parser.add_argument('--verbose',
+    parser.add_argument('-v', '--verbose',
                         help='Turn verbose mode on',
                         default=False,
                         action='store_true')
 
-    parser.add_argument('--source', '-s',
+    parser.add_argument('-s', '--source',
                         help='Absolute path to source folder',
                         default=getcwd(),
                         type=str)
 
-    parser.add_argument('--destination', '-d',
+    parser.add_argument('-d', '--destination',
                         help='Absolute path to destination folder',
                         default=DESTINATION_FOLDER,
                         type=str)
 
-    parser.add_argument('--extensions', '-e',
-                        help='Valid file extensions like .mp3 (with the dots)',
-                        default=VALID_EXTENTIONS,
+    parser.add_argument('-e', '--extensions',
+                        help='Valid file extensions like .mp3 (with the dot)',
+                        default=VALID_EXT,
                         type=str,
                         metavar='EXTENTION',
                         nargs='*')
@@ -72,7 +73,7 @@ def parse():
     print('File extensions: %s' % args.extensions)
 
     assert isdir(args.source), 'Invalid source path'
-    assert all([ext[0] is DOT for ext in args.extensions]), 'Invalid file extension'
+    assert all([ext[0] is '.' for ext in args.extensions]), 'Invalid file extension'
 
     return args
 
