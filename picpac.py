@@ -52,7 +52,7 @@ def encode(filepath):
 
 
 def parse():
-    parser = ArgumentParser(description=__doc__)
+    parser = ArgumentParser(description=__doc__, prog='picpac')
 
     parser.add_argument('-v', '--verbose',
                         help='Turn verbose mode on',
