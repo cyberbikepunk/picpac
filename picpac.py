@@ -32,7 +32,7 @@ DIR = 0
 
 # Defaults:
 DESTINATION_FOLDER = expanduser('~/.picpac')
-VALID_EXTENTIONS = ['.jpg',
+VALID_EXTENSIONS = ['.jpg',
                     '.jpeg',
                     '.bmp',
                     '.gif',
