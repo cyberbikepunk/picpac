@@ -95,15 +95,15 @@ def pick_n_pack(source, destination, extensions):
             progress.update(files)
 
             if Path(file).suffix in extensions:
-                image = Path(node[DIR], file)
-                hashed = Path(destination, encode(image))
+                original = Path(node[DIR], file)
+                hashed = Path(destination, encode(original))
 
                 if not hashed.exists():
-                    hashed.symlink_to(image)
+                    hashed.symlink_to(original)
                     info('added symlink: %s', hashed)
                     symlinks += 1
                 else:
-                    info('skipped duplicate: %s', image)
+                    info('skipped duplicate: %s', original)
 
     progress.finish()
     print('Done: %s symlinks.' % symlinks)
