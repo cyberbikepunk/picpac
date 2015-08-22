@@ -48,29 +48,29 @@ def encode(filepath):
             chunk = f.read(1024)
             h.update(chunk)
 
-    return h.hexdigest() + filepath.suffix.lower()
+    return h.hexdigest() + filepath.suffix
 
 
 def parse():
     parser = ArgumentParser(description=__doc__)
 
-    parser.add_argument('--verbose', '-v',
+    parser.add_argument('-v', '--verbose',
                         help='Turn verbose mode on',
                         default=False,
                         action='store_true')
 
-    parser.add_argument('--source', '-s',
+    parser.add_argument('-s', '--source',
                         help='Absolute path to source folder',
                         default=getcwd(),
                         type=str)
 
-    parser.add_argument('--destination', '-d',
+    parser.add_argument('-d', '--destination',
                         help='Absolute path to destination folder',
                         default=DESTINATION_FOLDER,
                         type=str)
 
-    parser.add_argument('--extensions', '-e',
-                        help='Valid file extensions like .mp3 (with the dots)',
+    parser.add_argument('-e', '--extensions',
+                        help='Valid file extensions like .mp3 (with the dot)',
                         default=VALID_EXTENTIONS,
                         type=str,
                         metavar='EXTENTION',
@@ -95,7 +95,7 @@ def pick_n_pack(source, destination, extensions):
     for node in tree:
         info('found directory: %s', node[DIR])
         for file in node[FILES]:
-            if Path(file).suffix.lower() in extensions:
+            if Path(file).suffix in extensions:
                 image = Path(node[DIR], file)
                 hashed = Path(destination, encode(image))
                 if not hashed.exists():
