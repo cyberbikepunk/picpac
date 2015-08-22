@@ -48,7 +48,7 @@ def encode(filepath):
             chunk = f.read(1024)
             h.update(chunk)
 
-    return h.hexdigest() + filepath.suffix
+    return h.hexdigest() + filepath.suffix.lower()
 
 
 def parse():
@@ -95,7 +95,7 @@ def pick_n_pack(source, destination, extensions):
     for node in tree:
         info('found directory: %s', node[DIR])
         for file in node[FILES]:
-            if Path(file).suffix in extensions:
+            if Path(file).suffix.lower() in extensions:
                 image = Path(node[DIR], file)
                 hashed = Path(destination, encode(image))
                 if not hashed.exists():
