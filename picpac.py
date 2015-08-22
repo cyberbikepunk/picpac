@@ -61,9 +61,9 @@ def parse():
 
     parser.add_argument('-e', '--extensions',
                         help='Valid file extensions like .mp3 (with the dot)',
-                        default=VALID_EXT,
+                        default=VALID_EXTENSIONS,
                         type=str,
-                        metavar='EXTENTION',
+                        metavar='EXT',
                         nargs='*')
 
     args = parser.parse_args()
