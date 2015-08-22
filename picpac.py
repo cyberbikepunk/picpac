@@ -12,7 +12,7 @@ of file content not filename.
 
 from os.path import isdir, expanduser
 from argparse import ArgumentParser
-from os import walk, getcwd, mkdir
+from os import walk, getcwd, mkdir, access, W_OK
 from pathlib import Path
 from logging import basicConfig, INFO, info, disable
 from hashlib import md5
@@ -112,7 +112,8 @@ class DestinationError(Exception):
 
 def initialize(destination):
     if isdir(destination):
-        pass
+        if not access(destination, W_OK):
+            raise PermissionError('Cannot write to %s' % destination)
     else:
         try:
             mkdir(destination)
