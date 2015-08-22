@@ -1,2 +1,2 @@
 # picpac
-picpac picks and packs your pics
+PICPAC picks and packs your pics
