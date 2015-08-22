@@ -9,7 +9,8 @@ of file content not filename.
 
 """
 
-# NB: this script has not been optimized for speed.
+# TODO: Optimize for speed
+# TODO: Add a progress bar.
 
 
 from os.path import isdir, expanduser
@@ -88,6 +89,11 @@ def parse():
     return args
 
 
+def progress_bar(f):
+    return f
+
+
+@progress_bar
 def pick_n_pack(source, destination, extensions):
     tree = walk(source)
     added = 0
@@ -130,6 +136,7 @@ def configure(verbose):
 
 if __name__ == '__main__':
     p = parse()
+
     configure(p.verbose)
     initialize(p.destination)
     pick_n_pack(p.source, p.destination, p.extensions)
