@@ -76,7 +76,7 @@ def parse():
 
     args = parser.parse_args()
 
-    print('Source: %s' % args.destination)
+    print('Source: %s' % args.source)
     print('Destination: %s.' % args.destination)
     print('File extensions: %s' % args.extensions)
 
