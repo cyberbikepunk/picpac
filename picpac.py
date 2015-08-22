@@ -3,7 +3,7 @@
 PICPAC recursively collects files inside the current directory and creates flat symlinks
 inside a destination folder. If no arguments are passed, PICPAC selects only images and
 puts symlinks under the home directory (~/.picpac). PICPAC avoids duplication on the basis
-of file content not filename. PICPAC is handy to keep playlists or slideshows up to date.
+of file content not filename.
 
 """
 
@@ -64,7 +64,7 @@ def parse():
                         type=str)
 
     parser.add_argument('--extensions', '-e',
-                        help='Valid file extensions e.g. .jpg ',
+                        help='Valid file extensions like .mp3 (with the dots)',
                         default=VALID_EXTENTIONS,
                         type=str,
                         metavar='EXT',
@@ -74,7 +74,7 @@ def parse():
     debug('arguments: %s', args)
 
     assert isdir(args.source), 'Invalid source path'
-    assert all([ext[0] is DOT for ext in args.extensions]), 'Invalid extension'
+    assert all([ext[0] is DOT for ext in args.extensions]), 'Invalid file extension'
 
     return args
 
