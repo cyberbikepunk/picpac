@@ -1,4 +1,4 @@
-""" PICPAC picks and packs pics!
+""" PICPAC picks and packs your pics
 
 PICPAC recursively collects files inside the current directory and creates flat symlinks
 inside a destination folder. If no arguments are passed, PICPAC selects only images and
