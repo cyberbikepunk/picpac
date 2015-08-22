@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#!/usr/bin/python3
 
 """ PICPAC picks and packs your pics
 
@@ -54,6 +54,11 @@ def encode(filepath):
 def parse():
     parser = ArgumentParser(description=__doc__)
 
+    parser.add_argument('--verbose', '-v',
+                        help='Turn verbose mode on',
+                        default=False,
+                        action='store_true')
+
     parser.add_argument('--source', '-s',
                         help='Absolute path to source folder',
                         default=getcwd(),
@@ -68,13 +73,8 @@ def parse():
                         help='Valid file extensions like .mp3 (with the dots)',
                         default=VALID_EXTENTIONS,
                         type=str,
-                        metavar='EXT',
+                        metavar='EXTENTION',
                         nargs='*')
-
-    parser.add_argument('--verbose', '-v',
-                        help='Turn verbose mode on',
-                        default=False,
-                        action='store_true')
 
     args = parser.parse_args()
 
