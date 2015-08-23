@@ -110,11 +110,11 @@ def pick_n_pack(source, destination, extensions, verbose):
 
 def show_progress(file_nb, total_files, length=50):
     progress = int(file_nb / total_files * length)
-    remainder = ' ' * (length - progress)
+    remainder = '.' * (length - progress)
     counter = str(file_nb) + ' / ' + str(total_files)
 
     stdout.flush()
-    stdout.write('\r' + 'Processing: ' + counter + ' [' + '*' * progress + remainder + ']')
+    stdout.write('\r' + 'Processing: ' + ' [' + '#' * progress + remainder + '] ' + counter)
 
     if file_nb == total_files:
         print()
