@@ -10,10 +10,7 @@ of file content not filename.
 """
 
 
-# TODO: Optimize for speed.
-
-
-from progressbar import ProgressBar
+from sys import stdout
 from os.path import isdir, expanduser
 from argparse import ArgumentParser
 from itertools import chain
@@ -21,6 +18,9 @@ from os import walk, getcwd, mkdir, access, W_OK
 from logging import basicConfig, INFO, info, disable
 from hashlib import md5
 from pathlib import Path
+
+
+# TODO: Optimize for speed.
 
 
 # Verbose mode:
@@ -78,21 +78,20 @@ def parse():
     return args
 
 
-def pick_n_pack(source, destination, extensions):
+def pick_n_pack(source, destination, extensions, verbose):
     tree = list(walk(source))
+    total_files = get_total_files(tree)
 
-    progress = get_progress_bar(tree)
-    progress.start()
-
-    files = 0
-    symlinks = 0
+    file_nb = 0
+    symlinks_nb = 0
 
     for node in tree:
         info('found directory: %s', node[DIR])
 
         for file in node[FILES]:
-            files += 1
-            progress.update(files)
+            file_nb += 1
+            if not verbose:
+                show_progress(file_nb, total_files)
 
             if Path(file).suffix in extensions:
                 original = Path(node[DIR], file)
@@ -101,18 +100,28 @@ def pick_n_pack(source, destination, extensions):
                 if not hashed.exists():
                     hashed.symlink_to(original)
                     info('added symlink: %s', hashed)
-                    symlinks += 1
+                    symlinks_nb += 1
                 else:
                     info('skipped duplicate: %s', original)
 
-    progress.finish()
-    print('Done: %s symlinks.' % symlinks)
+    print('Done: %s symlinks.' % symlinks_nb)
 
 
-def get_progress_bar(tree_):
-    file_nodes = [node_[FILES] for node_ in tree_]
-    total_files = len(list(chain(*file_nodes)))
-    return ProgressBar(maxval=total_files)
+def show_progress(file_nb, total_files, length=50):
+    progress = int(file_nb / total_files * length)
+    remainder = ' ' * (length - progress)
+    counter = str(file_nb) + ' / ' + str(total_files)
+
+    stdout.flush()
+    stdout.write('\r' + 'Processing: ' + counter + ' [' + '*' * progress + remainder + ']')
+
+    if file_nb == total_files:
+        print()
+
+
+def get_total_files(tree):
+    files = [node[FILES] for node in tree]
+    return len(list(chain(*files)))
 
 
 def encode(filepath):
@@ -152,5 +161,5 @@ if __name__ == '__main__':
 
     configure(p.verbose)
     initialize(p.destination)
-    pick_n_pack(p.source, p.destination, p.extensions)
+    pick_n_pack(p.source, p.destination, p.extensions, p.verbose)
 
