@@ -90,6 +90,7 @@ def pick_n_pack(source, destination, extensions, verbose):
 
         for file in node[FILES]:
             file_nb += 1
+
             if not verbose:
                 show_progress(file_nb, total_files)
 
@@ -99,8 +100,8 @@ def pick_n_pack(source, destination, extensions, verbose):
 
                 if not hashed.exists():
                     hashed.symlink_to(original)
-                    info('added symlink: %s', hashed)
                     symlinks_nb += 1
+                    info('added symlink: %s', hashed)
                 else:
                     info('skipped duplicate: %s', original)
 
